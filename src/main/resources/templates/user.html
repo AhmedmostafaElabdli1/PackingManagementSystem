@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            display: none; /* Hide the table by default */
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #showHideButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>User List</h1>
+    <button id="showHideButton" onclick="toggleUserList()">Show/Hide User List</button>
+    <table id="userTable">
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>National ID</th>
+            <th>Salary</th>
+            <th>User Type</th>
+            <th>Manager ID</th>
+            <!-- Add more headers as needed -->
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchUserList();
+    });
+
+    function toggleUserList() {
+        const userTable = document.getElementById('userTable');
+        userTable.style.display = (userTable.style.display === 'none') ? 'table' : 'none';
+    }
+
+    function fetchUserList() {
+        fetch('http://localhost:8080/user/findAll') // Replace with your Spring Boot endpoint
+            .then(response => response.json())
+            .then(data => {
+                displayUserList(data);
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+                // Handle error scenarios, e.g., display an error message to the user
+            });
+    }
+
+    function displayUserList(users) {
+        const userTableBody = document.querySelector('#userTable tbody');
+        userTableBody.innerHTML = '';
+
+        if (users.length === 0) {
+            userTableBody.innerHTML = '<tr><td colspan="13">No users found.</td></tr>';
+            return;
+        }
+
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                    <td>${user.user_id}</td>
+                    <td>${user.first_name}</td>
+                    <td>${user.last_name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.age}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.address}</td>
+                    <td>${user.user_name}</td>
+                    <td>${user.password}</td>
+                    <td>${user.nid}</td>
+                    <td>${user.salary}</td>
+                    <td>${user.user_type}</td>
+                    <td>${user.manager_id}</td>
+                    <!-- Add more cells as needed -->
+                `;
+            userTableBody.appendChild(row);
+        });
+    }
+</script>
+</body>
+</html>
